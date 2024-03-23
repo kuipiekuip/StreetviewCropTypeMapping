@@ -11,7 +11,7 @@ EARTH_RADIUS = 6371e3  # in meters
 DISTANCE_DELTA = 0.0001  # used for interpolating points along the road
 PERPENDICULAR_DISTANCE = 30  # distance for calculating field points
 OVERPASS_API_URL = "http://overpass-api.de/api/interpreter"
-SHAPEFILE_PATH = 'Bomen/bomen.shp'
+SHAPEFILE_PATH = 'bomen/bomen.shp'
 ROADPOINTS_CSV_SAVE_PATH = 'roadPoints'
 
 #Global list for all points
@@ -49,7 +49,7 @@ def process_shapefile(shapefile_path):
         #     print("Geometry ", geo_data.iloc[geo_idx])
         print('GEO Index', geo_idx)
         # print('Percentage index done:' ,geo_idx/length_geo_data)
-        if (geo_idx >= 7 and geo_idx <= length_geo_data):
+        if (geo_idx >= 7 and geo_idx <= 200):
             process_geometry(geometry, geo_idx)
 
 def process_geometry(geometry, geo_idx):
