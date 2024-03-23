@@ -11,7 +11,11 @@ EARTH_RADIUS = 6371e3  # in meters
 DISTANCE_DELTA = 0.0001  # used for interpolating points along the road
 PERPENDICULAR_DISTANCE = 30  # distance for calculating field points
 OVERPASS_API_URL = "http://overpass-api.de/api/interpreter"
-SHAPEFILE_PATH = r'C:\Users\kuipe\OneDrive\Bureaublad\TU Delft\Master\Deep Learning\Project\StreetviewCropTypeMapping\OSMRoadPoints\bomen.shp'
+SHAPEFILE_PATH = 'Bomen/bomen.shp'
+ROADPOINTS_CSV_SAVE_PATH = 'roadPoints'
+
+#Global list for all points
+all_points = []
 
 
 def compute_bearing(from_point, to_point):
@@ -38,13 +42,15 @@ def compute_point_on_field(from_point, theta, distance):
 def process_shapefile(shapefile_path):
     """Process each geometry in the shapefile and save results."""
     geo_data = geopandas.read_file(shapefile_path)
-
+    length_geo_data = len(geo_data)
+    # print(f'len of shapefile path:{length_geo_data}')
     for geo_idx, geometry in enumerate(geo_data.geometry):
         # if geo_data.iloc[geo_idx]['name_1'] == 'Andhra Pradesh':
         #     print("Geometry ", geo_data.iloc[geo_idx])
-        print('GEO Index ', geo_idx)
-        # if geo_idx >= 7:
-            # process_geometry(geometry, geo_idx)
+        print('GEO Index', geo_idx)
+        # print('Percentage index done:' ,geo_idx/length_geo_data)
+        if (geo_idx >= 7 and geo_idx <= length_geo_data):
+            process_geometry(geometry, geo_idx)
 
 def process_geometry(geometry, geo_idx):
     """Process a single geometry from the shapefile."""
@@ -58,14 +64,14 @@ def process_geometry(geometry, geo_idx):
 
     # if geometry.is_complex:  # Adjust this condition based on your criteria for complexity
     # print(len(geometry))
-    print("Geometry old:", geometry)
+    # print("Geometry old:", geometry)
     geometry = geometry.simplify(tolerance, preserve_topology=True)
-    print("Geometry:", geometry)
+    # print("Geometry:", geometry)
     # print("Post simplify")
     # print(len(geometry))
 
     if geometry.geom_type == "MultiPolygon":
-        print("MultiPolygon")
+        # print("MultiPolygon")
         road_data_combined = {'elements': []}  # Initialize combined road data
         for subgeom in geometry.geoms:  # Iterate through each subpolygon
             subgeom_simplified = subgeom.simplify(tolerance, preserve_topology=True)
@@ -77,8 +83,8 @@ def process_geometry(geometry, geo_idx):
             # print(road_data)
 
     else:
-        print(geometry.geom_type)
-        print("NOT a MULTIPOLYGON")
+        # print(geometry.geom_type)
+        # print("NOT a MULTIPOLYGON")
         geometry = geometry.simplify(tolerance, preserve_topology=True)
         lon , lat = geometry.x, geometry.y
         polygon_query = create_overpass_query(lon , lat)
@@ -96,17 +102,35 @@ def create_overpass_query(lon, lat):
     );
     out geom;
     """
-    print(overpass_query)
+    # print(overpass_query)
     return overpass_query
 
 def fetch_overpass_data(query):
     """Fetch data from the Overpass API."""
     response = requests.get(OVERPASS_API_URL, params={'data': query})
-    print(response.status_code)
-    print
+    # print(response.status_code)
+    # print
     return response.json()
 
+
 def process_road_data(road_data, geo_idx):
+    """Process road data and save the output to global list."""
+    road_points, field_points, original_points = [], [], []
+    for element in road_data['elements']:
+        if element['type'] == 'way':
+            keywords = ['highway']
+            tags = element.get('tags', {})
+            if any(keyword in tags for keyword in keywords):
+                try:
+                    process_way_element(element, road_points, field_points, original_points)
+                except Exception as e:
+                    print(e)
+
+    # Append the points to the global list
+    all_points.extend(road_points)
+    # Extend this logic to field_points and original_points if needed
+
+def process_road_data_old(road_data, geo_idx):
     """Process road data and save the output to CSV files."""
     road_points, field_points, original_points = [], [], []
     for element in road_data['elements']:
@@ -120,6 +144,8 @@ def process_road_data(road_data, geo_idx):
                     print(e)
 
     save_to_csv(road_points, f"roadPoints/roadPointsNW4_{geo_idx}.csv", "y,x,b,x1,y1,x2,y2")
+    # Add to all points list, to later save to .csv
+    # all_points.extend(road_points)
     # save_to_csv(field_points, f"roadPoints/fieldPointsNW4_{geo_idx}.csv", "y,x,b,yr,xr")
     # save_to_csv(original_points, f"roadPoints/osmRoadsNW4_{geo_idx}.csv", "y,x")
 
@@ -162,6 +188,16 @@ def save_to_csv(data, filename, header):
     """Save data to a CSV file."""
     np.savetxt(filename, data, delimiter=",", fmt='%f', header=header, comments='')
 
+def save_to_one_csv(data, filename, header):
+    """Save aggregated data to a single CSV file."""
+    # Ensure data is a NumPy array. This step is crucial if data is not already an array.
+    array_data = np.array(data)
+    np.savetxt(filename, array_data, delimiter=",", fmt='%f', header=header, comments='')
+
+
 # Main execution
 if __name__ == "__main__":
     process_shapefile(SHAPEFILE_PATH)
+    #save_to_one_csv(all_points, f"{ROADPOINTS_CSV_SAVE_PATH}/roadPoints.csv", "y,x,b,x1,y1,x2,y2")
+    save_to_one_csv(all_points, f"{ROADPOINTS_CSV_SAVE_PATH}/all_roadPoints.csv", "y,x,b,x1,y1,x2,y2")
+    #save_to_one_csv(all_points, f"{ROADPOINTS_CSV_SAVE_PATH}/roadPoints.csv", "x,y,b,x1,y1,x2,y2")
