@@ -4,13 +4,14 @@ import math
 import pandas as pd
 import geopandas
 from shapely.geometry import LineString, Point, Polygon
+from pyproj import Transformer
 
 # Constants
 EARTH_RADIUS = 6371e3  # in meters
 DISTANCE_DELTA = 0.0001  # used for interpolating points along the road
 PERPENDICULAR_DISTANCE = 30  # distance for calculating field points
 OVERPASS_API_URL = "http://overpass-api.de/api/interpreter"
-SHAPEFILE_PATH = '/Users/jordi/Desktop/MIT-Research/India/SecondLevelIndiaShp/SecondLevelIndiaShp.shp'
+SHAPEFILE_PATH = r'C:\Users\kuipe\OneDrive\Bureaublad\TU Delft\Master\Deep Learning\Project\StreetviewCropTypeMapping\OSMRoadPoints\bomen.shp'
 
 
 def compute_bearing(from_point, to_point):
@@ -42,20 +43,28 @@ def process_shapefile(shapefile_path):
         # if geo_data.iloc[geo_idx]['name_1'] == 'Andhra Pradesh':
         #     print("Geometry ", geo_data.iloc[geo_idx])
         print('GEO Index ', geo_idx)
-        if geo_idx >= 7:
-            process_geometry(geometry, geo_idx)
+        # if geo_idx >= 7:
+            # process_geometry(geometry, geo_idx)
 
 def process_geometry(geometry, geo_idx):
     """Process a single geometry from the shapefile."""
+    transformer = Transformer.from_crs(f"EPSG:28992", "EPSG:4326", always_xy=True)
+
+    # Perform the transformation
+    lon, lat = transformer.transform(geometry.x, geometry.y)
+    geometry = Point(lon, lat)
+
     tolerance = 10
 
     # if geometry.is_complex:  # Adjust this condition based on your criteria for complexity
     # print(len(geometry))
+    print("Geometry old:", geometry)
     geometry = geometry.simplify(tolerance, preserve_topology=True)
+    print("Geometry:", geometry)
     # print("Post simplify")
     # print(len(geometry))
 
-    if geometry.type == "MultiPolygon":
+    if geometry.geom_type == "MultiPolygon":
         print("MultiPolygon")
         road_data_combined = {'elements': []}  # Initialize combined road data
         for subgeom in geometry.geoms:  # Iterate through each subpolygon
@@ -68,28 +77,33 @@ def process_geometry(geometry, geo_idx):
             # print(road_data)
 
     else:
+        print(geometry.geom_type)
         print("NOT a MULTIPOLYGON")
         geometry = geometry.simplify(tolerance, preserve_topology=True)
-        ext_coords = list(geometry.exterior.coords)
-        polygon_query = create_overpass_query(ext_coords)
+        lon , lat = geometry.x, geometry.y
+        polygon_query = create_overpass_query(lon , lat)
         road_data = fetch_overpass_data(polygon_query)
         # print(road_data)
 
     process_road_data(road_data, geo_idx)
 
-def create_overpass_query(ext_coords):
+def create_overpass_query(lon, lat):
     """Create an Overpass API query from exterior coordinates."""
-    coord_str = " ".join(f"{lon} {lat}" for lat, lon in ext_coords)
     overpass_query = f"""
     [out:json];
-    way(poly:"{coord_str}");
+    (
+        way(around:10, {lat}, {lon});
+    );
     out geom;
     """
+    print(overpass_query)
     return overpass_query
 
 def fetch_overpass_data(query):
     """Fetch data from the Overpass API."""
     response = requests.get(OVERPASS_API_URL, params={'data': query})
+    print(response.status_code)
+    print
     return response.json()
 
 def process_road_data(road_data, geo_idx):
