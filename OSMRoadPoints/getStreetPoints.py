@@ -4,13 +4,16 @@ import math
 import pandas as pd
 import geopandas
 from shapely.geometry import LineString, Point, Polygon
+from pyproj import Transformer
+from tqdm import tqdm
+all_road_points = []
 
 # Constants
 EARTH_RADIUS = 6371e3  # in meters
 DISTANCE_DELTA = 0.0001  # used for interpolating points along the road
 PERPENDICULAR_DISTANCE = 30  # distance for calculating field points
 OVERPASS_API_URL = "http://overpass-api.de/api/interpreter"
-SHAPEFILE_PATH = '/Users/jordi/Desktop/MIT-Research/India/SecondLevelIndiaShp/SecondLevelIndiaShp.shp'
+SHAPEFILE_PATH = r'C:\Users\kuipe\OneDrive\Bureaublad\TU Delft\Master\Deep Learning\Project\StreetviewCropTypeMapping\data\bomen.shp'
 
 
 def compute_bearing(from_point, to_point):
@@ -38,53 +41,37 @@ def process_shapefile(shapefile_path):
     """Process each geometry in the shapefile and save results."""
     geo_data = geopandas.read_file(shapefile_path)
 
-    for geo_idx, geometry in enumerate(geo_data.geometry):
+    for geo_idx, geometry in tqdm(enumerate(geo_data.geometry),total=len(geo_data.geometry)):
         # if geo_data.iloc[geo_idx]['name_1'] == 'Andhra Pradesh':
         #     print("Geometry ", geo_data.iloc[geo_idx])
-        print('GEO Index ', geo_idx)
+        # print('GEO Index ', geo_idx)
         if geo_idx >= 7:
             process_geometry(geometry, geo_idx)
+            if geo_idx == 20:
+                break
 
 def process_geometry(geometry, geo_idx):
     """Process a single geometry from the shapefile."""
-    tolerance = 10
+    transformer = Transformer.from_crs(f"EPSG:28992", "EPSG:4326", always_xy=True)
 
-    # if geometry.is_complex:  # Adjust this condition based on your criteria for complexity
-    # print(len(geometry))
-    geometry = geometry.simplify(tolerance, preserve_topology=True)
-    # print("Post simplify")
-    # print(len(geometry))
-
-    if geometry.type == "MultiPolygon":
-        print("MultiPolygon")
-        road_data_combined = {'elements': []}  # Initialize combined road data
-        for subgeom in geometry.geoms:  # Iterate through each subpolygon
-            subgeom_simplified = subgeom.simplify(tolerance, preserve_topology=True)
-            ext_coords = list(subgeom_simplified.exterior.coords)
-            polygon_query = create_overpass_query(ext_coords)
-            road_data = fetch_overpass_data(polygon_query)
-            # print(road_data[])
-            road_data_combined['elements'].extend(road_data['elements'])  # Combine road data
-            # print(road_data)
-
-    else:
-        print("NOT a MULTIPOLYGON")
-        geometry = geometry.simplify(tolerance, preserve_topology=True)
-        ext_coords = list(geometry.exterior.coords)
-        polygon_query = create_overpass_query(ext_coords)
-        road_data = fetch_overpass_data(polygon_query)
-        # print(road_data)
+    # Perform the transformation
+    lon, lat = transformer.transform(geometry.x, geometry.y)
+    # lon , lat = geometry.x, geometry.y
+    polygon_query = create_overpass_query(lon, lat)
+    road_data = fetch_overpass_data(polygon_query)
 
     process_road_data(road_data, geo_idx)
 
-def create_overpass_query(ext_coords):
+def create_overpass_query(lon, lat):
     """Create an Overpass API query from exterior coordinates."""
-    coord_str = " ".join(f"{lon} {lat}" for lat, lon in ext_coords)
     overpass_query = f"""
     [out:json];
-    way(poly:"{coord_str}");
+    (
+        way(around:10, {lat}, {lon});
+    );
     out geom;
     """
+
     return overpass_query
 
 def fetch_overpass_data(query):
@@ -104,8 +91,15 @@ def process_road_data(road_data, geo_idx):
                     process_way_element(element, road_points, field_points, original_points)
                 except Exception as e:
                     print(e)
-
-    save_to_csv(road_points, f"roadPoints/roadPointsNW4_{geo_idx}.csv", "y,x,b,x1,y1,x2,y2")
+    # print(road_points[0])
+    # print(type(road_points))
+    if len(road_points) > 0:  
+        # all_road_points.append((geo_idx,) + road_points[0])           
+        all_road_points.extend(road_points)   
+        # save_to_csv([road_points[0]], f"roadPoints/roadPointsNW4_{geo_idx}.csv", "y,x,b,x1,y1,x2,y2")
+    else:
+        return
+        # save_to_csv(road_points, f"roadPoints/roadPointsNW4_{geo_idx}.csv", "y,x,b,x1,y1,x2,y2")
     # save_to_csv(field_points, f"roadPoints/fieldPointsNW4_{geo_idx}.csv", "y,x,b,yr,xr")
     # save_to_csv(original_points, f"roadPoints/osmRoadsNW4_{geo_idx}.csv", "y,x")
 
@@ -151,3 +145,5 @@ def save_to_csv(data, filename, header):
 # Main execution
 if __name__ == "__main__":
     process_shapefile(SHAPEFILE_PATH)
+    # save_to_csv(all_road_points, "roadPoints/allRoadPointswithGeo.csv", "geo_idx,y,x,b,x1,y1,x2,y2")
+    save_to_csv(all_road_points, "roadPoints/allRoadPoints.csv", "y,x,b,x1,y1,x2,y2")
