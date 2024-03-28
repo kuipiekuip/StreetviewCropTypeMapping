@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3794d738-4340-4441-81ed-13de39d5bf29" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/OSMRoadPoints/getStreetPoints.py" beforeDir="false" afterPath="$PROJECT_DIR$/OSMRoadPoints/getStreetPoints.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/filternGetThailandGSVImages.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/models/filternGetThailandGSVImages.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -17,18 +17,19 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2eEMWsXIuItplgrHVRXNfKknZoH" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/kuipe/miniconda3/envs/dlproject"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kuipe/miniconda3/envs/dlproject&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -38,6 +39,8 @@
       <option name="presentableId" value="Default" />
       <updated>1711465319223</updated>
       <workItem from="1711465320674" duration="645000" />
+      <workItem from="1711528555379" duration="249000" />
+      <workItem from="1711528826276" duration="1248000" />
     </task>
     <servers />
   </component>
