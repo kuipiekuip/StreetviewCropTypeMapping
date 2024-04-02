@@ -44,10 +44,10 @@ def checkInGrowing(image_date_str, check_date_str):
     # Extracting month and year from the dates
     image_date = datetime.strptime(image_date_str, "%Y-%m")
     check_date = datetime.strptime(check_date_str, "%Y-%m-%d")
-    print(image_date, check_date)
+    # print(image_date, check_date)
     # Calculate the month difference
     diff = month_diff(image_date.month, check_date.month)
-    print(diff)
+    # print(diff)
     # Check if the difference is within 3 months
     return diff <= 3
 
@@ -106,7 +106,7 @@ def getMeta(points, myloc, imLimit=0):
                         uniqueImageIDs.append(resJson["pano_id"])
                         meta = str(tree["geo_index"]) + "_" + str(tree["label"])
                         # print(meta)
-                        # getStreet(lat, lon, myloc, bearing, meta)
+                        getStreet(lat, lon, myloc, bearing, meta)
             else:
                 print("No images found")
         i += 1
