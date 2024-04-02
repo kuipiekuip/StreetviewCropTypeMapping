@@ -33,6 +33,9 @@ def checkInGrowing(date):
 
 def getStreet(lat,lon,SaveLoc, bearing, meta):
 
+    if not os.path.exists(SaveLoc):
+        os.makedirs(SaveLoc)
+
     # Zet conditie heirin de naam van de file
     heading1 = bearing
     MyUrl = "https://maps.googleapis.com/maps/api/streetview?size=640x640&location="+str(lat)+","+str(lon)+"&fov=90&heading="+str(heading1)+"&pitch=0" + key
