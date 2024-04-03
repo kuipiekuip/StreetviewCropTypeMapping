@@ -17,7 +17,7 @@ from tqdm import tqdm
 KEY = """AIzaSyB-vx7Dh0LJ2abn8qDPeulCoc4d8w0kodM"""
 key = "&key=" + KEY
 
-TREECOVER_FILENAME = 'roadPoints/allRoadPoints.csv'
+TREECOVER_FILENAME = 'OSMRoadPoints/roadPoints/allRoadPoints.csv'
 
 trees = pd.read_csv(TREECOVER_FILENAME)
 
