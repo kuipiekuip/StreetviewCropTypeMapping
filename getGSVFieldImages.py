@@ -14,6 +14,7 @@ import streetview
 import math
 from tqdm import tqdm
 
+
 KEY = """AIzaSyB-vx7Dh0LJ2abn8qDPeulCoc4d8w0kodM"""
 key = "&key=" + KEY
 
@@ -21,9 +22,10 @@ TREECOVER_FILENAME = 'OSMRoadPoints/roadPoints/allRoadPoints.csv'
 
 trees = pd.read_csv(TREECOVER_FILENAME)
 
+
 def checkInGrowing(date):
     # print(date)
-    MONTHS = '08, 09, 10, 11, 12, 01,03'
+    MONTHS = '08, 09, 10, 11, 12, 01, 03'
     # print(date[-2:])
     if date[-2:] in MONTHS:
         # print(date[-2:])
@@ -51,7 +53,7 @@ def getMeta(points, myloc, imLimit=0):
     i = 0
     # for idx, tree in points.iterrows():
     for idx, tree in tqdm(points.iterrows(), total=len(points)):
-        if i <= imLimit:
+        if i <= imLimit and tree['geo_index'] == 13711:
 
             lon, lat = tree['rp_lon'], tree['rp_lat']
             # print(lon, lat)
@@ -61,6 +63,8 @@ def getMeta(points, myloc, imLimit=0):
             # print(resJson)
             bearing = float(tree['b'])
             # print(bearing)
+            gsv_pic_loc = resJson['location']
+            print(f'gsv pic location: {gsv_pic_loc}')
             if resJson['status'] ==  'OK':
                 if checkInGrowing(resJson['date']):
                     if resJson['pano_id'] not in uniqueImageIDs:
@@ -74,4 +78,4 @@ def getMeta(points, myloc, imLimit=0):
         i+=1
 
 imLimit = 100
-getMeta(trees, 'images', imLimit=0)
+getMeta(trees, 'images_test', imLimit=0)
