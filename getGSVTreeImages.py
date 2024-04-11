@@ -45,15 +45,19 @@ def checkInGrowing(image_date_str, check_date_str):
     image_date = datetime.strptime(image_date_str, "%Y-%m")
     check_date = datetime.strptime(check_date_str, "%Y-%m-%d")
     # Calculate the month difference
-    diff = month_diff(image_date.month, check_date.month)
-    year_diff = abs(image_date.year - check_date.year)
+    month_diff_without_year = abs((check_date.month - image_date.month))
+    year_diff = abs(check_date.year - image_date.year)
+    month_diff = (year_diff) * 12 + (month_diff_without_year)
     # small debug for tweaking
     # if diff > 3:
     #     print(f'Diff higher then 3, diff: {diff}')
     # # Check if the difference is within 3 months
     # return diff <= 3
     # Check if the difference is within the same month
-    return diff <= 3 and year_diff == 0
+    print(f'total month diff {month_diff}')
+    print(f'total month diff without year {month_diff_without_year}')
+    return month_diff <= 15 and month_diff_without_year <=3
+
 
 
 def getStreet(lat, lon, SaveLoc, bearing, meta):
@@ -67,7 +71,7 @@ def getStreet(lat, lon, SaveLoc, bearing, meta):
         + str(lat)
         + ","
         + str(lon)
-        + "&fov=90&source=outdoor&radius=10"
+        + "&fov=90&source=outdoor&radius=6"
         + key
     )
     fi = meta + ".jpg"
@@ -95,23 +99,25 @@ def getMeta(points, myloc, imLimit=0):
                 + str(lat)
                 + ","
                 + str(lon)
-                + "&fov=80&source=outdoor&radius=10"
+                + "&fov=80&source=outdoor&radius6"
                 + key
             )
             response = requests.get(link)
             resJson = response.json()
             bearing = float(tree["b"])
             idx_tree = tree["geo_index"]
-            # is there a GSV image in a radius of 10 m from the tree coordinate?
+            # is there a GSV image in a radius of 6 m from the tree coordinate?
             if resJson["status"] == "OK":
+                # manual distance check
+                gsv_pic_loc = resJson["location"]
+                gsv_lat, gsv_lon = gsv_pic_loc["lat"], gsv_pic_loc["lng"]
+                distance = geodesic((lat, lon), (gsv_lat, gsv_lon)).meters
+                print(f'calculated distance in meter {distance} m')
                 if checkInGrowing(resJson["date"], tree["date"]):
-                    # manual distance check
-                    gsv_pic_loc = resJson["location"]
-                    gsv_lat, gsv_lon = gsv_pic_loc["lat"], gsv_pic_loc["lng"]
-                    distance = geodesic((lat, lon), (gsv_lat, gsv_lon)).meters
-                    if distance <= 10:
+                    if distance <= 5:
                         if resJson["pano_id"] not in uniqueImageIDs:
                             meta = str(tree["geo_index"]) + "_" + str(tree["label"])
+                            print(f'downloading: {meta}')
                             uniqueImageIDs.append(resJson["pano_id"])
                             getStreet(lat, lon, myloc, bearing, meta)
 
@@ -129,4 +135,4 @@ def getMeta(points, myloc, imLimit=0):
 
 
 imLimit = 100
-getMeta(trees, "images", imLimit=0)
+getMeta(trees, "images5m", imLimit=0)
