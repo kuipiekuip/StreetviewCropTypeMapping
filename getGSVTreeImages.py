@@ -1,63 +1,46 @@
-import requests
-import numpy as np
 import time
-import shutil
+
+import requests
 
 start_time = time.time()
 
 import pandas as pd
-import csv
 import urllib.request, os
 import urllib.parse
-import numpy as np
-import streetview
-import math
 from tqdm import tqdm
 import geopandas
 from pyproj import Transformer
 from geopy.distance import geodesic
 from datetime import datetime
 
-KEY = """AIzaSyB-vx7Dh0LJ2abn8qDPeulCoc4d8w0kodM"""
+KEY = """AIzaSyB-vx7Dh0LJ2abn8qDPeulCoc4d8w0kodM""" #Insert own API key
 key = "&key=" + KEY
 
-# Load roadpoint file
-TREECOVER_FILENAME = "OSMRoadPoints/roadPoints/allRoadPoints_updated.csv"
-shapefile_path = (
-    r"C:\Users\tijnv\Desktop\StreetviewCropTypeMapping\OSMRoadPoints\bomen\bomen.shp"
-)
+# Load RoadPoint.csv
+TREECOVER_FILENAME = r"OSMRoadPoints/roadPoints/RoadPoints.csv"
 trees = pd.read_csv(TREECOVER_FILENAME)
 
 # Load geo_data
+
+shapefile_path = (
+    r"C:\Users\tijnv\Desktop\StreetviewCropTypeMapping\OSMRoadPoints\bomen\bomen.shp"
+)
 geo_data = geopandas.read_file(shapefile_path)
 geo_data = geo_data.dropna(subset=["CONDITIE"]).reset_index(drop=True)
 transformer = Transformer.from_crs(f"EPSG:28992", "EPSG:4326", always_xy=True)
-
-
-def month_diff(month1, month2):
-    """Calculate the difference between two months, considering circular nature."""
-    diff = abs(month1 - month2)
-    return min(diff, 12 - diff)
 
 
 def checkInGrowing(image_date_str, check_date_str):
     # Extracting month and year from the dates
     image_date = datetime.strptime(image_date_str, "%Y-%m")
     check_date = datetime.strptime(check_date_str, "%Y-%m-%d")
+
     # Calculate the month difference
     month_diff_without_year = abs((check_date.month - image_date.month))
     year_diff = abs(check_date.year - image_date.year)
     month_diff = (year_diff) * 12 + (month_diff_without_year)
-    # small debug for tweaking
-    # if diff > 3:
-    #     print(f'Diff higher then 3, diff: {diff}')
-    # # Check if the difference is within 3 months
-    # return diff <= 3
-    # Check if the difference is within the same month
-    print(f'total month diff {month_diff}')
-    print(f'total month diff without year {month_diff_without_year}')
-    return month_diff <= 15 and month_diff_without_year <=3
 
+    return month_diff <= 15 and month_diff_without_year <= 3
 
 
 def getStreet(lat, lon, SaveLoc, bearing, meta):
@@ -67,13 +50,12 @@ def getStreet(lat, lon, SaveLoc, bearing, meta):
     # Zet conditie heirin de naam van de file
     # query with no bearing anymore, radius and outdoor specified
     MyUrl = (
-        "https://maps.googleapis.com/maps/api/streetview?size=640x640&location="
-        + str(lat)
-        + ","
-        + str(lon)
-        + "&fov=90&source=outdoor&radius=6"
-        + key
-    )
+            "https://maps.googleapis.com/maps/api/streetview?size=640x640&location="
+            + str(lat)
+            + ","
+            + str(lon)
+            + "&fov=90&source=outdoor&radius=6"
+            + key)
     fi = meta + ".jpg"
     urllib.request.urlretrieve(MyUrl, os.path.join(SaveLoc, fi))
 
@@ -87,52 +69,47 @@ def getMeta(points, myloc, imLimit=0):
     i = 0
     # for idx, tree in points.iterrows():
     for idx, tree in tqdm(points.iterrows(), total=len(points)):
-        # if i <= imLimit and tree['geo_index'] == 13711:   #if you want to just pull a specific tree
+        # if i <= imLimit and tree['geo_index'] == 13711:   #For pulling speficic tree based on idx
         if i <= imLimit:
             # get tree location from geo_data
             geometry = geo_data.geometry[idx]
-            lon, lat = transformer.transform(geometry.x, geometry.y)
-
+            tree_lon, tree_lat = transformer.transform(geometry.x, geometry.y)
             # query with no bearing anymore, radius and outdoor specified
             link = (
-                "https://maps.googleapis.com/maps/api/streetview/metadata?size=640x640&location="
-                + str(lat)
-                + ","
-                + str(lon)
-                + "&fov=80&source=outdoor&radius6"
-                + key
+                    "https://maps.googleapis.com/maps/api/streetview/metadata?size=640x640&location="
+                    + str(tree_lat )
+                    + ","
+                    + str(tree_lon)
+                    + "&fov=80&source=outdoor&radius6"
+                    + key
             )
             response = requests.get(link)
             resJson = response.json()
             bearing = float(tree["b"])
-            idx_tree = tree["geo_index"]
-            # is there a GSV image in a radius of 6 m from the tree coordinate?
+            # Did the api give us an image within 5 meters
+
             if resJson["status"] == "OK":
-                # manual distance check
                 gsv_pic_loc = resJson["location"]
                 gsv_lat, gsv_lon = gsv_pic_loc["lat"], gsv_pic_loc["lng"]
-                distance = geodesic((lat, lon), (gsv_lat, gsv_lon)).meters
-                print(f'calculated distance in meter {distance} m')
+                #Calculate distance based on distance
+                distance = geodesic((tree_lat, tree_lon), (gsv_lat, gsv_lon)).meters
                 if checkInGrowing(resJson["date"], tree["date"]):
+                    print('growinddate')
+                    # Distance check based on coordinates
+                    print(distance)
                     if distance <= 5:
+                        print('distance ok')
+                        # Is image not already pulled for another tree?
                         if resJson["pano_id"] not in uniqueImageIDs:
                             meta = str(tree["geo_index"]) + "_" + str(tree["label"])
-                            print(f'downloading: {meta}')
+                            print(resJson["status"])
+                            print(idx)
                             uniqueImageIDs.append(resJson["pano_id"])
-                            getStreet(lat, lon, myloc, bearing, meta)
-
-                            # debug for tweaking
-                            # print(resJson)
-                            # print(f'idx:{idx_tree}')
-                            # print(f'gsv pic location: {gsv_lat, gsv_lon}')
-                            # print(f'tree coordinates: {lat, lon}')
-                            # print(f'distance photo and tree: {distance}')
-                            # print(tree["date"])
+                            getStreet(tree_lat, tree_lon, myloc, bearing, meta)
             else:
-                # No image found in radius of 10 meter around the tree coordinate
-                print(f"No GSV images found for index: {idx_tree} (within parameters)")
+                print(f"No GSV images found for index: {idx} (within parameters)")
         i += 1
 
 
 imLimit = 100
-getMeta(trees, "images5m", imLimit=0)
+getMeta(trees, "images", imLimit=0)
