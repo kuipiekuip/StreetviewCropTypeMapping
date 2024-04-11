@@ -1,0 +1,9 @@
+numpy
+pandas
+geopandas
+opencv-python
+requests
+tqdm
+Pillow
+pyproj
+geopy
