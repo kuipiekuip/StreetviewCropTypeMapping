@@ -30,7 +30,7 @@ geo_data = geo_data.dropna(subset=["CONDITIE"]).reset_index(drop=True)
 transformer = Transformer.from_crs(f"EPSG:28992", "EPSG:4326", always_xy=True)
 
 
-def checkInGrowing(image_date_str, check_date_str):
+def checkInCloseDate(image_date_str, check_date_str):
     # Extracting month and year from the dates
     image_date = datetime.strptime(image_date_str, "%Y-%m")
     check_date = datetime.strptime(check_date_str, "%Y-%m-%d")
@@ -43,7 +43,7 @@ def checkInGrowing(image_date_str, check_date_str):
     return month_diff <= 15 and month_diff_without_year <= 3
 
 
-def getStreet(lat, lon, SaveLoc, bearing, meta):
+def getStreet(lat, lon, SaveLoc, maxDistance, meta):
     if not os.path.exists(SaveLoc):
         os.makedirs(SaveLoc)
 
@@ -54,13 +54,13 @@ def getStreet(lat, lon, SaveLoc, bearing, meta):
             + str(lat)
             + ","
             + str(lon)
-            + "&fov=90&source=outdoor&radius=6"
+            + f"&fov=90&source=outdoor&radius={int(maxDistance)+1}"
             + key)
     fi = meta + ".jpg"
     urllib.request.urlretrieve(MyUrl, os.path.join(SaveLoc, fi))
 
 
-def getMeta(points, myloc, imLimit=0):
+def getMeta(points, myloc, maxDistance, imLimit=0):
     uniqueImageIDs = []
     points = points.reset_index()  # make sure indexes pair with number of rows
     if imLimit == 0:
@@ -80,7 +80,7 @@ def getMeta(points, myloc, imLimit=0):
                     + str(tree_lat )
                     + ","
                     + str(tree_lon)
-                    + "&fov=80&source=outdoor&radius6"
+                    + f"&fov=80&source=outdoor&radius{int(maxDistance)+1}"
                     + key
             )
             response = requests.get(link)
@@ -93,23 +93,19 @@ def getMeta(points, myloc, imLimit=0):
                 gsv_lat, gsv_lon = gsv_pic_loc["lat"], gsv_pic_loc["lng"]
                 #Calculate distance based on distance
                 distance = geodesic((tree_lat, tree_lon), (gsv_lat, gsv_lon)).meters
-                if checkInGrowing(resJson["date"], tree["date"]):
-                    print('growinddate')
+                if checkInCloseDate(resJson["date"], tree["date"]):
                     # Distance check based on coordinates
-                    print(distance)
-                    if distance <= 5:
-                        print('distance ok')
+                    if distance <= maxDistance:
                         # Is image not already pulled for another tree?
                         if resJson["pano_id"] not in uniqueImageIDs:
                             meta = str(tree["geo_index"]) + "_" + str(tree["label"])
-                            print(resJson["status"])
-                            print(idx)
                             uniqueImageIDs.append(resJson["pano_id"])
-                            getStreet(tree_lat, tree_lon, myloc, bearing, meta)
+                            getStreet(tree_lat, tree_lon, myloc, maxDistance, meta)
             else:
-                print(f"No GSV images found for index: {idx} (within parameters)")
+                # print(f"No GSV images found for index: {idx} (within parameters)")
+                pass
         i += 1
 
 
 imLimit = 100
-getMeta(trees, "images", imLimit=0)
+getMeta(trees, "images", maxDistance=5,imLimit=0)

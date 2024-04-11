@@ -65,7 +65,7 @@ def process_shapefile(shapefile_path):
     for geo_idx, geometry in tqdm(
             enumerate(geo_data.geometry), total=len(geo_data.geometry)
     ):
-        if 0 <= geo_idx < 1000:
+        if 0 <= geo_idx < 10000000000:  #lower or upper limit for geo_idx if needed
             process_geometry(geometry, geo_idx, geo_data)
 
 
@@ -126,7 +126,8 @@ def process_road_data(road_data, geo_idx, geo_data):
 
     else:
         # Handle the case where no nearest road point is found.
-        print(f"No road point found near tree at index {geo_idx}")
+        # print(f"No road point found near tree at index {geo_idx}")
+        pass
 
 
 def save_to_csv(data, filename, header):
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     process_shapefile(SHAPEFILE_PATH)
     save_to_csv(
         all_road_points,
-        "roadPoints/RoadPoints.csv",
+        "OSMRoadPoints/roadPoints/RoadPoints.csv",
         "geo_index,rp_lat,rp_lon,b,label,date",
     )
     print("Done")

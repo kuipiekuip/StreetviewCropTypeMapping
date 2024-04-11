@@ -9,7 +9,7 @@ TREECOVER_FILENAME = 'OSMRoadPoints/roadPoints/allRoadPoints.csv'
 trees = pd.read_csv(TREECOVER_FILENAME)
 
 # Assuming you have another dataset in a shapefile with dates for each geo_index
-shapefile_path = 'C:/Users/tijnv/Desktop/StreetviewCropTypeMapping/OSMRoadPoints/bomen/bomen.shp'
+shapefile_path = '/OSMRoadPoints/bomen/bomen.shp'
 geo_data = geopandas.read_file(shapefile_path)
 
 print('before')
