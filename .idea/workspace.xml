@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3794d738-4340-4441-81ed-13de39d5bf29" name="Changes" comment="-get TreeGSV deleted functions we don't need&#10;-cleaned op roadpoint code as well, with date row&#10;-made sure it all runs as well still">
-      <change afterPath="$PROJECT_DIR$/OSMRoadPoints/bomen/bomen.shp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/imageSegmentation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OSMRoadPoints/getStreetPoints.py" beforeDir="false" afterPath="$PROJECT_DIR$/getStreetPoints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adding_date_to_roadpoints.py" beforeDir="false" afterPath="$PROJECT_DIR$/testfiles/adding_date_to_roadpoints.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/getGSVFieldImages.py" beforeDir="false" afterPath="$PROJECT_DIR$/testfiles/old/getGSVFieldImages.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/getGSVTreeImages.py" beforeDir="false" afterPath="$PROJECT_DIR$/getGSVTreeImages.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prediction.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/testfiles/clean_csv.py" beforeDir="false" afterPath="$PROJECT_DIR$/testfiles/old/clean_csv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testfiles/new_csv.py" beforeDir="false" afterPath="$PROJECT_DIR$/testfiles/old/new_csv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testfiles/test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/dbfAnalysis.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testfiles/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbfAnalysis.py" afterDir="false" />
-    </list>
+    <list default="true" id="3794d738-4340-4441-81ed-13de39d5bf29" name="Changes" comment="-get TreeGSV deleted functions we don't need&#10;-cleaned op roadpoint code as well, with date row&#10;-made sure it all runs as well still" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,22 +34,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ToolWindowRun.ShowToolbar": "false",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "last__changes__before__submit",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/tijnv/Desktop/StreetviewCropTypeMapping",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ToolWindowRun.ShowToolbar&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;last__changes__before__submit&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/tijnv/Desktop/StreetviewCropTypeMapping&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\tijnv\Desktop\StreetviewCropTypeMapping" />
@@ -129,7 +116,7 @@
     <SUITE FILE_PATH="coverage/getStreetPoints_py$getGSVFieldImages.coverage" NAME="getGSVFieldImages Coverage Results" MODIFIED="1712248154441" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/getStreetPoints_py$getGSVtrees_heading.coverage" NAME="getGSVtrees_heading Coverage Results" MODIFIED="1712235363491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/getStreetPoints_py$image_mask_test.coverage" NAME="image_mask_test Coverage Results" MODIFIED="1712669449404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/getStreetPoints_py$getGSVTreeImages.coverage" NAME="getGSVTreeImages Coverage Results" MODIFIED="1712869715055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/getStreetPoints_py$getGSVTreeImages.coverage" NAME="getGSVTreeImages Coverage Results" MODIFIED="1712869785617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/getStreetPoints_py$getStreetPoints.coverage" NAME="getStreetPoints Coverage Results" MODIFIED="1712869662202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
