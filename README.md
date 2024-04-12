@@ -70,10 +70,11 @@ pip install numpy pandas geopandas opencv-python requests tqdm pillow pyproj geo
 - **Output**: Segmented images saved in the specified directory.
 
 ### `binaryTreeClassifier.ipynb`
-- **Purpose**: Trains a binary classifier to filter out GSV images that do not contain a clear view of a tree.
+- **Purpose**: Trains a binary classifier to identify Google Street View images that prominently feature trees, helping to filter out irrelevant images.
 - **Key Parameters**:
-  - Train, validate and test data which can be found in `TreeOrNoTree-Data.zip`
-- **Output**: Classification of the test dataset.
+  - `apiKey`: API key required to download the dataset (`TreeOrNoTree-Data`), which can be obtained from the creators.
+  - `datasetPath`: Path to the dataset (`TreeOrNoTree-Data`), which includes train, validate, and test splits.
+- **Output**: A model that classifies images based on tree visibility and a report on classification accuracy on the test dataset.
 
 We would like to refer to the blog post we created as well! [Documentation](https://example.com)
 <!-- CONTACT -->
