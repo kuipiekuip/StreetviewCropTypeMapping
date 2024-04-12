@@ -5,8 +5,9 @@ This toolkit consists of three main scripts designed to extract and analyze stre
 1. `getStreetPoints.py`: Generates a CSV file with road point coordinates of trees and relevant metadata.
 2. `getGSVTreeImages.py`: Downloads images from Google Street View using coordinates and ensures they match the date of the tree's health assessment.
 3. `imageSegmentation.py`: Processes downloaded images to segment and highlight tree areas, blurring other parts.
+4. `binaryTreeClassifier.ipynb`: Trains a binary classifier to filter out GSV images that do not contain a clear view of a tree.
 
-4. We would like to refer to the blog post we created as well! [Documentation](https://example.com)
+5. We would like to refer to the blog post we created as well! [Documentation](https://example.com)
 
 ### Built With
 
@@ -67,6 +68,12 @@ pip install numpy pandas geopandas opencv-python requests tqdm pillow pyproj geo
   - Roboflow API key.
   - Directories for input images and output segmented images.
 - **Output**: Segmented images saved in the specified directory.
+
+### `binaryTreeClassifier.ipynb`
+- **Purpose**: Trains a binary classifier to filter out GSV images that do not contain a clear view of a tree.
+- **Key Parameters**:
+  - Train, validate and test data which can be found in `TreeOrNoTree-Data.zip`
+- **Output**: Classification of the test dataset.
 
 We would like to refer to the blog post we created as well! [Documentation](https://example.com)
 <!-- CONTACT -->
