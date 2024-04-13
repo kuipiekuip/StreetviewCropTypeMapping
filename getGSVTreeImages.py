@@ -13,7 +13,7 @@ from pyproj import Transformer
 from geopy.distance import geodesic
 from datetime import datetime
 
-KEY = """AIzaSyB-vx7Dh0LJ2abn8qDPeulCoc4d8w0kodM""" #Insert own API key
+KEY = """INSERT_API_KEY""" #Insert own API key
 key = "&key=" + KEY
 
 # Load RoadPoint.csv
@@ -21,7 +21,6 @@ TREECOVER_FILENAME = r"OSMRoadPoints/roadPoints/RoadPoints.csv"
 trees = pd.read_csv(TREECOVER_FILENAME)
 
 # Load geo_data
-
 shapefile_path = (
     r"C:\Users\tijnv\Desktop\StreetviewCropTypeMapping\OSMRoadPoints\bomen\bomen.shp"
 )
@@ -108,4 +107,4 @@ def getMeta(points, myloc, maxDistance, imLimit=0):
 
 
 imLimit = 100
-getMeta(trees, "images", maxDistance=5,imLimit=0)
+getMeta(trees, "images", maxDistance=10,imLimit=0)
